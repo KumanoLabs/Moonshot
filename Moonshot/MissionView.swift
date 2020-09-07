@@ -30,14 +30,23 @@ struct MissionView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { (outer: GeometryProxy) in
             ScrollView(.vertical) {
                 VStack {
-                    Image(self.mission.image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: geometry.size.width * 0.7)
-                        .padding()
+                    GeometryReader { (inner: GeometryProxy) in
+                        HStack {
+                            Spacer()
+                            Image(self.mission.image)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: outer.size.width * 0.7)
+                                .padding()
+                            Spacer()
+                        }
+                        .padding(.top, 100 + inner.size.height - inner.frame(in: .global).maxY)
+                    }
+                    .frame(height: outer.size.width * 0.7)
+                    
                     Text("Launch Date: \(self.mission.formattedLaunchDate)")
                         .font(.headline)
                     Text(self.mission.description)
